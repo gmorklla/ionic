@@ -8,5 +8,6 @@ Usar 'set proxy=http://server:port' (http://192.168.100.24:8080) antes de correr
 
 ## Probar app
 
-Primero ingresar al foder que contiene la app: cd todo
-Después ingresar comando: ionic serve
+1. Primero ingresar al foder que contiene la app: cd todo  
+
+2. Después ingresar comando: ionic serve  
