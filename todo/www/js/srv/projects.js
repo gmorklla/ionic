@@ -7,33 +7,26 @@
  * # Projects
  */
 angular.module('starter')
-    .factory('Projects', function() {
+    .factory('Projects', function(Items) {
+        var projectString = Items;
         return {
             all: function() {
-                var projectString = window.localStorage['projects'];
                 if (projectString) {
-                    return angular.fromJson(projectString);
+                    return projectString;
                 }
                 return [];
             },
             save: function(projects) {
-                window.localStorage['projects'] = angular.toJson(projects);
+                projectString.$add( projects );
             },
             delete: function(projects) {
-                window.localStorage['projects'] = angular.toJson(projects);
+                projectString.$remove( projects );
             },            
             newProject: function(projectTitle) {
                 // Add a new project
                 return {
-                    title: projectTitle,
-                    tasks: []
+                    title: projectTitle
                 };
-            },
-            getLastActiveIndex: function() {
-                return parseInt(window.localStorage['lastActiveProject']) || 0;
-            },
-            setLastActiveIndex: function(index) {
-                window.localStorage['lastActiveProject'] = index;
             }
         }
     });

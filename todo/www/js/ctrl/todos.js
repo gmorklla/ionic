@@ -14,17 +14,13 @@ angular.module('starter')
         // with the given projectTitle
         var createProject = function(projectTitle) {
             var newProject = Projects.newProject(projectTitle);
-            $scope.projects.push(newProject);
-            Projects.save($scope.projects);
-            $scope.selectProject(newProject, $scope.projects.length - 1);
+            Projects.save(newProject);
         }
 
 
         // Load or initialize projects
         $scope.projects = Projects.all();
-
-        // Grab the last active, or the first project
-        $scope.activeProject = $scope.projects[Projects.getLastActiveIndex()];
+        console.log($scope.projects);
 
         // Called to create a new project
         $scope.newProject = function() {
@@ -35,10 +31,9 @@ angular.module('starter')
         };
 
         // Called to select the given project
-        $scope.selectProject = function(project, index) {
+        $scope.selectProject = function(project) {
             $scope.activeProject = project;
-            Projects.setLastActiveIndex(index);
-            $ionicSideMenuDelegate.toggleLeft(false);
+            //$ionicSideMenuDelegate.toggleLeft(false);
         };
 
         // Create our modal
@@ -52,13 +47,20 @@ angular.module('starter')
             if (!$scope.activeProject || !task) {
                 return;
             }
-            $scope.activeProject.tasks.push({
-                title: task.title
-            });
-            $scope.taskModal.hide();
 
-            // Inefficient, but save all the projects
-            Projects.save($scope.projects);
+            var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
+            if(queGuardar.tasks){
+                queGuardar.tasks.push({title: task.title});
+            } else {
+                var tasks = [
+                    {
+                        title: task.title
+                    }            
+                ];
+                queGuardar.tasks = tasks;                
+            }
+            $scope.projects.$save(queGuardar);
+            $scope.taskModal.hide();
 
             task.title = "";
         };
@@ -76,20 +78,16 @@ angular.module('starter')
         };
 
         $scope.removeProject = function () {
-            var indice = Projects.getLastActiveIndex();
-            $scope.projects.splice(indice, 1);
-            Projects.delete($scope.projects);
+            console.log($scope.activeProject);
+            Projects.delete($scope.activeProject);
         }
 
         $scope.onDoubleTap = function () {
             console.info('Double tap');
         }
 
-
-        // Try to create the first project, make sure to defer
-        // this by using $timeout so everything is initialized
-        // properly
-        $timeout(function() {
+        $scope.projects.$loaded().then(function(projects) {
+           console.log(projects.length); // data is loaded here
             if ($scope.projects.length == 0) {
                 while (true) {
                     var projectTitle = prompt('Your first project title:');
@@ -98,7 +96,7 @@ angular.module('starter')
                         break;
                     }
                 }
-            }
-        }, 1000);
+            }           
+        });
 
     }]);

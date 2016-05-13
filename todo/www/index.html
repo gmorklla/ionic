@@ -14,12 +14,17 @@
     <script src="lib/ionic/js/ionic.bundle.js"></script>
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>    
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <!-- ctrl's js -->
     <script src="js/ctrl/todos.js"></script>
     <!-- srv's js -->
-    <script src="js/srv/projects.js"></script>    
+    <script src="js/srv/projects.js"></script>
+    <script src="js/srv/firebaseItems.js"></script>    
 </head>
 
 <body ng-app="starter" ng-controller="TodoCtrl">
@@ -58,7 +63,7 @@
             </ion-header-bar>
             <ion-content scroll="false">
                 <ion-list>
-                    <ion-item ng-repeat="project in projects" ng-click="selectProject(project, $index)" ng-class="{active: activeProject == project}">
+                    <ion-item ng-repeat="project in projects" ng-click="selectProject(project)" ng-class="{active: activeProject == project}">
                         {{project.title}}
                     </ion-item>
                 </ion-list>
