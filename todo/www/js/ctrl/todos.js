@@ -13,14 +13,19 @@ angular.module('starter')
         // A utility function for creating a new project
         // with the given projectTitle
         var createProject = function(projectTitle) {
-            var newProject = Projects.newProject(projectTitle);
-            Projects.save(newProject);
+            var newProject = {
+                title: projectTitle
+            };
+            Projects.save(newProject).then(function (ref) {
+                var id = ref.key();
+                console.log("added record with id " + id);
+                //$scope.projects.$indexFor(id); // returns location in the array
+            })
         }
 
 
         // Load or initialize projects
         $scope.projects = Projects.all();
-        console.log($scope.projects);
 
         // Called to create a new project
         $scope.newProject = function() {
@@ -78,8 +83,13 @@ angular.module('starter')
         };
 
         $scope.removeProject = function () {
-            console.log($scope.activeProject);
-            Projects.delete($scope.activeProject);
+            Projects.delete($scope.activeProject).then(function (ref) {
+                if($scope.projects.length > 0) {
+                    $scope.activeProject = $scope.projects[0];
+                } else {
+                    console.info('Ya no hay proyectos!');
+                }
+            });
         }
 
         $scope.onDoubleTap = function () {

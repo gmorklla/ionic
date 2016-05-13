@@ -17,16 +17,10 @@ angular.module('starter')
                 return [];
             },
             save: function(projects) {
-                projectString.$add( projects );
+                return projectString.$add( projects );
             },
             delete: function(projects) {
-                projectString.$remove( projects );
-            },            
-            newProject: function(projectTitle) {
-                // Add a new project
-                return {
-                    title: projectTitle
-                };
+                return projectString.$remove( projects );              
             }
         }
     });
