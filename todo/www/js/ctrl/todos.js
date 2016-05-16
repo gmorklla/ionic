@@ -133,13 +133,14 @@ angular.module('starter')
 
         // Fn para borrar task
         $scope.borrarTask = function (task) {
-            if(task) {
+            console.log(task);
+            /*if(task) {
                 task = null;
             }
             var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
             $scope.projects.$save(queGuardar).then(function(ref) {
                 console.log('Cambio guardado en base');
-            });
+            });*/
         }
 
     }]);
