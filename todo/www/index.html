@@ -45,9 +45,29 @@
             </ion-header-bar>
             <ion-content scroll="false">
                 <ion-list>
-                    <ion-item ng-repeat="task in activeProject.tasks" on-double-tap="onDoubleTap()">
-                        {{task.title}}
-                    </ion-item>
+                    <ion-checkbox ng-repeat="task in activeProject.tasks" ng-model="task.completada" ng-change="terminada(task)">
+                        <span ng-class="{terminada: task.completada == true}">
+                            {{task.title}}
+                        </span>
+                        <br ng-if="task.fechaFin">
+                        <hr ng-if="task.fechaFin">
+                        <span ng-if="task.fechaFin">
+                            <i class="icon ion-android-time"></i>
+                            Inicio: {{task.fechaInicio | date:'dd/MM - h:mm a'}}
+                        </span>
+                        <br ng-if="task.fechaFin">
+                        <hr ng-if="task.fechaFin">
+                        <span ng-if="task.fechaFin">
+                            <i class="icon ion-android-time"></i>
+                            Final: {{task.fechaFin | date:'dd/MM - h:mm a'}}
+                        </span>
+                        <br ng-if="task.fechaFin">
+                        <hr ng-if="task.fechaFin">
+                        <span ng-if="task.fechaFin">
+                            <i class="icon ion-android-stopwatch"></i>
+                            Tiempo: {{(task.fechaFin - task.fechaInicio) /1000/60/60  | number:2}} hrs.
+                        </span>
+                    </ion-checkbox>
                 </ion-list>
             </ion-content>
         </ion-side-menu-content>

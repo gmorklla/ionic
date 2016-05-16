@@ -55,11 +55,17 @@ angular.module('starter')
 
             var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
             if(queGuardar.tasks){
-                queGuardar.tasks.push({title: task.title});
+                queGuardar.tasks.push({
+                    title: task.title,
+                    completada: false,
+                    fechaInicio: Firebase.ServerValue.TIMESTAMP
+                });
             } else {
                 var tasks = [
                     {
-                        title: task.title
+                        title: task.title,
+                        completada: false,
+                        fechaInicio: Firebase.ServerValue.TIMESTAMP
                     }            
                 ];
                 queGuardar.tasks = tasks;                
@@ -106,7 +112,22 @@ angular.module('starter')
                         break;
                     }
                 }
-            }           
+            } else {
+                $scope.activeProject = $scope.projects[0];
+            }
         });
+
+        $scope.terminada = function (task) {
+            if(task.completada) {
+                task.fechaFin = Firebase.ServerValue.TIMESTAMP;
+            } else {
+                task.fechaFin = null;
+            }
+            var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
+            $scope.projects.$save(queGuardar).then(function(ref) {
+                //var referencia = ref.key();
+                console.log('Cambio guardado en base');
+            });
+        }
 
     }]);
