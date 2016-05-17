@@ -17,14 +17,17 @@
     <!-- Firebase -->
     <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
     <!-- AngularFire -->
-    <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>    
+    <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+    <!-- underscore js -->
+    <script src="lib/underscore/underscore.js"></script>     
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <!-- ctrl's js -->
     <script src="js/ctrl/todos.js"></script>
     <!-- srv's js -->
     <script src="js/srv/projects.js"></script>
-    <script src="js/srv/firebaseItems.js"></script>    
+    <script src="js/srv/firebaseItems.js"></script>
+    <script src="js/srv/_.js"></script>   
 </head>
 
 <body ng-app="starter" ng-controller="TodoCtrl">
@@ -38,19 +41,21 @@
                     <i class="icon ion-navicon"></i>
                 </button>
                 <h1 class="title">{{activeProject.title}}</h1>
-                <!-- New Task button-->
+                <!-- Btn nueva Task -->
                 <button class="button button-icon" ng-click="newTask()">
                     <i class="icon ion-compose"></i>
                 </button>
             </ion-header-bar>
-            <ion-content scroll="false">
+            <ion-content scroll="true">
                 <ion-list>
                     <div ng-repeat="task in activeProject.tasks">
+                        <!-- Checkbox con título y tiempo total -->
                         <ion-checkbox ng-model="task.completada" ng-change="terminada(task)">
                             <span ng-class="{terminada: task.completada == true}">
                                 {{task.title}} [ <i class="icon ion-clock"></i> {{obtenerTiempo(task) | number: 2}} hrs. ]
                             </span>
                         </ion-checkbox>
+                        <!-- Inicio - Fin de proyecto -->
                         <div class="row">
                             <span class="col item-note">
                                 <i class="icon ion-calendar"></i>
@@ -60,15 +65,41 @@
                                 <i class="icon ion-calendar"></i>
                                 Fin: {{task.fechaFin | date:'dd/MM - h:mm a'}}
                             </span>
-                        </div>                        
+                        </div>
+                        <!-- Css animation de reloj -->
                         <div class="loading-clock" ng-class="{pausa: task.fechaInicio == null}"></div>
+                        <!-- Btn's play, pausa, detalles -->
                         <div class="button-bar">
                             <a class="button button-small icon-center ion-play button-positive" ng-click="play(task)"></a>
                             <a class="button button-small icon-center ion-pause button-calm" ng-click="pausa(task)"></a>
-                        </div>                        
+                            <a class="button button-small icon-center ion-more button-balanced" ng-click="detalles(task, $index)"></a>
+                        </div>
+                        <!-- Btn eliminar -->
                         <button class="button button-small button-full button-assertive" ng-if="task.fechaFin" ng-click="borrarTask(task)">
                             Eliminar tarea
                         </button>
+                        <!-- Detalles -->
+                        <div class="list card" ng-if="showDetails == 1 && indice == $index">
+
+                            <div class="item item-avatar">
+                                <img src="img/mcfly.jpg">
+                                <h2>Detalles: {{task.title}}</h2>
+                                <p>Tiempo total invertido: {{obtenerTiempo(task) | number: 2}} hrs.</p>
+                            </div>
+
+                            <div class="list porcentajesList" ng-repeat="item in porcentajes">
+                                <a class="item" href="#">
+                                    <h2>{{item.porcentaje | number: 1}}%</h2>
+                                    <p>{{item.inicio | date:'dd/MM - h:mm a'}} - {{item.final | date:'dd/MM - h:mm a'}}</p>
+                                </a>
+                            </div>
+
+                            <a class="item item-icon-left assertive" href="#">
+                            <i class="icon ion-music-note"></i>
+                            Start listening
+                            </a>
+
+                        </div>
                     </div>
                 </ion-list>
             </ion-content>

@@ -8,7 +8,7 @@
  * Controller of the starter
  */
 angular.module('starter')
-    .controller('TodoCtrl', ['$scope', '$timeout', '$ionicModal', '$ionicPopup', 'Projects', '$ionicSideMenuDelegate', function($scope, $timeout, $ionicModal, $ionicPopup, Projects, $ionicSideMenuDelegate) {
+    .controller('TodoCtrl', ['Projects', '_', '$scope', '$timeout', '$ionicModal', '$ionicPopup', '$ionicSideMenuDelegate', function(Projects, _, $scope, $timeout, $ionicModal, $ionicPopup, $ionicSideMenuDelegate) {
 
         // Fn para crear proyecto
         var createProject = function(projectTitle) {
@@ -186,6 +186,21 @@ angular.module('starter')
                 tiempos.push(tiempo);
                 task.tiempos = tiempos;
             }
+            if(task.periodos) {
+                var periodo = {
+                        inicio: task.fechaInicio,
+                        final: n
+                };
+                task.periodos.push(periodo);
+            } else {
+                var periodos = [
+                    {
+                        inicio: task.fechaInicio,
+                        final: n
+                    }            
+                ];
+                task.periodos = periodos; 
+            }
             task.fechaInicio = null;
             var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
             $scope.projects.$save(queGuardar).then(function(ref) {
@@ -206,6 +221,51 @@ angular.module('starter')
             } else {
                 return 0.00;
             }
+        }
+
+        $scope.showDetails == 0;
+        $scope.indice = null;
+
+        // Fn para mostrar detalles
+        $scope.detalles = function (task, indice) {
+            if($scope.showDetails == 1 && $scope.indice >= 0){
+                if($scope.indice == indice) {
+                    $scope.showDetails = 0;
+                    $scope.indice = null;
+                    return;
+                } else {
+                    $scope.showDetails = 1;
+                    $scope.indice = indice;                    
+                }
+            } else {
+                $scope.showDetails = 1;
+                $scope.indice = indice;
+            }
+
+            $scope.porcentajes = [];
+
+            if(task.periodos) {
+                //var primero = _.first(task.periodos).inicio;
+                //var ultimo = _.last(task.periodos).final;                
+                for (var i = 0; i < task.periodos.length; i++) {
+                    var tiempo = (task.periodos[i].final - task.periodos[i].inicio) /1000/60/60;                
+                    var porcentaje = (tiempo * 100) / $scope.tiempoTranscurrido;
+                    var objeto = {
+                        inicio: task.periodos[i].inicio,
+                        final: task.periodos[i].final,
+                        porcentaje: porcentaje
+                    };
+                    $scope.porcentajes.push(objeto);
+                }
+            } else {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'No hay detalles todavía',
+                    subTitle: 'Deberías empezar a trabajar en esta tarea'
+                });                
+                return;
+            }
+
+            console.log(document.getElementsByClassName("porcentajesList"));
         }
 
     }]);
