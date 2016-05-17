@@ -45,31 +45,31 @@
             </ion-header-bar>
             <ion-content scroll="false">
                 <ion-list>
-                    <ion-item ng-repeat="task in activeProject.tasks">
+                    <div ng-repeat="task in activeProject.tasks">
                         <ion-checkbox ng-model="task.completada" ng-change="terminada(task)">
                             <span ng-class="{terminada: task.completada == true}">
-                                {{task.title}}
-                            </span>
-                            <br ng-if="task.fechaFin">
-                            <hr ng-if="task.fechaFin">
-                            <span class="item-note" ng-if="task.fechaFin">
-                                <i class="icon ion-android-time"></i>
-                                {{task.fechaInicio | date:'dd/MM - h:mm a'}} | 
-                                <i class="icon ion-android-time"></i>
-                                {{task.fechaFin | date:'dd/MM - h:mm a'}}
-                            </span>
-
-                            <br ng-if="task.fechaFin">
-                            <!-- <hr ng-if="task.fechaFin"> -->
-                            <span class="item-note" ng-if="task.fechaFin">
-                                <i class="icon ion-android-stopwatch"></i>
-                                Tiempo: {{(task.fechaFin - task.fechaInicio) /1000/60/60  | number:2}} hrs.
+                                {{task.title}} [ <i class="icon ion-clock"></i> {{obtenerTiempo(task) | number: 2}} hrs. ]
                             </span>
                         </ion-checkbox>
-                        <button class="button button-small button-assertive" ng-if="task.fechaFin" ng-click="borrarTask(task)">
+                        <div class="row">
+                            <span class="col item-note">
+                                <i class="icon ion-calendar"></i>
+                                Inicio: {{task.inicioDeProyecto | date:'dd/MM - h:mm a'}}
+                            </span>
+                            <span class="col item-note" ng-if="task.fechaFin">
+                                <i class="icon ion-calendar"></i>
+                                Fin: {{task.fechaFin | date:'dd/MM - h:mm a'}}
+                            </span>
+                        </div>                        
+                        <div class="loading-clock" ng-class="{pausa: task.fechaInicio == null}"></div>
+                        <div class="button-bar">
+                            <a class="button button-small icon-center ion-play button-positive" ng-click="play(task)"></a>
+                            <a class="button button-small icon-center ion-pause button-calm" ng-click="pausa(task)"></a>
+                        </div>                        
+                        <button class="button button-small button-full button-assertive" ng-if="task.fechaFin" ng-click="borrarTask(task)">
                             Eliminar tarea
                         </button>
-                    </ion-item>
+                    </div>
                 </ion-list>
             </ion-content>
         </ion-side-menu-content>
@@ -115,7 +115,7 @@
                 </form>
             </ion-content>
         </div>
-    </script>
+    </script>  
 </body>
 
 </html>

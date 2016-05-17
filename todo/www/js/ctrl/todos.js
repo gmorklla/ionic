@@ -8,7 +8,7 @@
  * Controller of the starter
  */
 angular.module('starter')
-    .controller('TodoCtrl', ['$scope', '$timeout', '$ionicModal', 'Projects', '$ionicSideMenuDelegate', function($scope, $timeout, $ionicModal, Projects, $ionicSideMenuDelegate) {
+    .controller('TodoCtrl', ['$scope', '$timeout', '$ionicModal', '$ionicPopup', 'Projects', '$ionicSideMenuDelegate', function($scope, $timeout, $ionicModal, $ionicPopup, Projects, $ionicSideMenuDelegate) {
 
         // Fn para crear proyecto
         var createProject = function(projectTitle) {
@@ -58,14 +58,14 @@ angular.module('starter')
                 queGuardar.tasks.push({
                     title: task.title,
                     completada: false,
-                    fechaInicio: Firebase.ServerValue.TIMESTAMP
+                    inicioDeProyecto: Firebase.ServerValue.TIMESTAMP
                 });
             } else {
                 var tasks = [
                     {
                         title: task.title,
                         completada: false,
-                        fechaInicio: Firebase.ServerValue.TIMESTAMP
+                        inicioDeProyecto: Firebase.ServerValue.TIMESTAMP
                     }            
                 ];
                 queGuardar.tasks = tasks;                
@@ -141,6 +141,71 @@ angular.module('starter')
             $scope.projects.$save(queGuardar).then(function(ref) {
                 console.log('Cambio guardado en base');
             });*/
+        }
+
+        // Fn que inicia el tiempo
+        $scope.play = function (task) {
+            if(!task.fechaInicio) {
+                task.fechaInicio = Firebase.ServerValue.TIMESTAMP;
+            } else {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'El tiempo ya está corriendo',
+                    subTitle: '¡Tú puedes!'
+                });
+
+               /* alertPopup.then(function(res) {
+                    console.log('Thank you for not eating my delicious ice cream cone');
+                });*/
+                return;
+            }
+            var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
+            $scope.projects.$save(queGuardar).then(function(ref) {
+                //var referencia = ref.key();
+                console.log('Cambio guardado en base');
+            });            
+        }
+
+        // Fn que guarda el tiempo que ha transcurrido
+        $scope.pausa = function (task) {
+            var n;
+            if(task.fechaInicio) {
+                var d = new Date();
+                n = d.getTime();
+            } else {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Debes iniciar el tiempo primero',
+                    subTitle: '¿Listo para empezar?'
+                });                
+                return;
+            }
+            var tiempo = (n - task.fechaInicio) /1000/60/60;
+            if(task.tiempos){
+                task.tiempos.push(tiempo);
+            } else {
+                var tiempos = [];
+                tiempos.push(tiempo);
+                task.tiempos = tiempos;
+            }
+            task.fechaInicio = null;
+            var queGuardar = $scope.projects.$getRecord($scope.activeProject.$id);
+            $scope.projects.$save(queGuardar).then(function(ref) {
+                //var referencia = ref.key();
+                console.log('Cambio guardado en base');
+                $scope.obtenerTiempo(task);
+            });            
+        }
+
+        // Fn para obtener tiempo total
+        $scope.obtenerTiempo = function (task) {
+            if(task.tiempos){
+                $scope.tiempoTranscurrido = 0;
+                for (var i = 0; i < task.tiempos.length; i++) {
+                    $scope.tiempoTranscurrido += task.tiempos[i];
+                }
+                return $scope.tiempoTranscurrido;
+            } else {
+                return 0.00;
+            }
         }
 
     }]);
